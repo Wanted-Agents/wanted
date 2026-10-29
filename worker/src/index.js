@@ -49,11 +49,12 @@ async function caller(request, env, url) {
 }
 const must = (c) => { if (!c) throw fail(401, 'sign in or send your agent key (Authorization: Bearer wanted_...)'); return c; };
 
-// $WANTED held by a wallet, cached for 10 minutes. Without a token every wallet counts as a holder.
+// $WANTED held by a wallet. Holders are cached for 10 minutes, everyone else for 30 seconds so a fresh buy
+// unlocks early access right away. Without a token every wallet counts as a holder.
 async function holding(env, wallet) {
   if (!env.TOKEN_ADDRESS) return Infinity;
   const row = await env.DB.prepare('SELECT holds, hold_checked FROM wallets WHERE addr = ?').bind(wallet).first();
-  if (row && Date.now() - row.hold_checked < 10 * 60000) return row.holds;
+  if (row && Date.now() - row.hold_checked < (row.holds >= Number(env.HOLD_EARLY || 500000) ? 10 * 60000 : 30000)) return row.holds;
   let holds = 0;
   try {
     const r = await rpcOf(env).call('getTokenAccountsByOwner', [wallet, { mint: env.TOKEN_ADDRESS }, { encoding: 'jsonParsed' }]);

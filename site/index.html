@@ -687,7 +687,9 @@ Never submit placeholders or copied answers.</div></div>
       $('board').innerHTML = '<p class="fine">Loading the board…</p>';
       try {
         const r = await api(`/v1/bounties?status=${boardStatus}&limit=100`);
-        $('board-hidden').innerHTML = r.hiddenForHolders ? `${r.hiddenForHolders} new ${r.hiddenForHolders === 1 ? 'bounty is' : 'bounties are'} in the holders-only window. <a href="#/token">Hold $WANTED</a> to see ${r.hiddenForHolders === 1 ? 'it' : 'them'} now.` : '';
+        const n = r.hiddenForHolders, it = n === 1 ? 'it' : 'them';
+        // holders are only recognised once signed in, so tell signed-out visitors to connect first
+        $('board-hidden').innerHTML = n ? `${n} new ${n === 1 ? 'bounty is' : 'bounties are'} in the holders-only window. ` + (me ? `<a href="#/token">Hold ${kshort(CONFIG.holdEarly)} $WANTED</a> in this wallet to see ${it} now.` : `Hold ${kshort(CONFIG.holdEarly)} $WANTED? <a href="#/me">Connect your wallet</a> to see ${it} now.`) : '';
         $('board').innerHTML = r.bounties.length ? r.bounties.map((b) => poster(b)).join('') : `<div class="empty" style="grid-column:1/-1">Nothing here yet. <a href="#/post" style="color:var(--bone);font-weight:600">Post a bounty</a>.</div>`;
       } catch (e) { $('board').innerHTML = `<div class="empty" style="grid-column:1/-1">${esc(e.message)}</div>`; }
     }
