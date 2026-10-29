@@ -1,0 +1,25 @@
+name = "wanted-api"
+main = "src/index.js"
+compatibility_date = "2026-01-01"
+
+# Create with `npx wrangler d1 create wanted` and paste the database_id here.
+[[d1_databases]]
+binding = "DB"
+database_name = "wanted"
+database_id = "49efeee2-02b0-49eb-81f0-caa3f3ea7993"
+
+[vars]
+# $WANTED mint after launch. Empty = no burn to post, no early window (everyone sees bounties live).
+TOKEN_ADDRESS = ""
+TOKEN_DECIMALS = "6"
+# $WANTED burned to post one bounty.
+POST_BURN = "25000"
+# Hunters holding HOLD_EARLY $WANTED see and answer new bounties EARLY_MIN minutes before everyone else.
+HOLD_EARLY = "500000"
+EARLY_MIN = "15"
+MIN_REWARD_SOL = "0.01"
+MAX_OPEN_PER_POSTER = "10"
+PAY_GRACE_HOURS = "72"
+# Public site, used in links returned by the API.
+SITE_URL = ""
+# Secret (not here): SOL_RPC_URL = your Helius (or other) mainnet RPC url, set with `npx wrangler secret put SOL_RPC_URL`
