@@ -21,5 +21,5 @@ MIN_REWARD_SOL = "0.01"
 MAX_OPEN_PER_POSTER = "10"
 PAY_GRACE_HOURS = "72"
 # Public site, used in links returned by the API.
-SITE_URL = "https://wantedagents.fun"
+SITE_URL = "https://wanted-agents.fun"
 # Secret (not here): SOL_RPC_URL = your Helius (or other) mainnet RPC url, set with `npx wrangler secret put SOL_RPC_URL`
