@@ -566,6 +566,7 @@ Never submit placeholders or copied answers.</div></div>
   <div class="toast" id="toast"></div>
 
   <script>
+  (() => { // own scope: wallet extensions define globals like window.phantom
     // ===== Settings: fill these in and re-upload this one file =====
     const CONFIG = {
       api: location.hostname === 'localhost' ? 'http://localhost:8797' : 'https://wanted-api.orchard-api.workers.dev', // WANTED API worker (local: node worker/dev.mjs)
@@ -624,10 +625,10 @@ Never submit placeholders or copied answers.</div></div>
       const data = cat(Uint8Array.of(15), u64le(amount), Uint8Array.of(decimals));
       return cat(Uint8Array.of(1, 0, 1), Uint8Array.of(keys.length), ...keys, b58dec(blockhash), Uint8Array.of(1, 3, 3, 1, 2, 0, data.length), data);
     }
-    const phantom = () => window.phantom?.solana || (window.solana?.isPhantom ? window.solana : null);
+    const getPhantom = () => window.phantom?.solana || (window.solana?.isPhantom ? window.solana : null);
     async function signIn() {
       if (session && me) return me;
-      const p = phantom();
+      const p = getPhantom();
       if (!p) { toast('Phantom not found. Open this page in Phantom or install it.'); return null; }
       const { publicKey } = await p.connect();
       const address = publicKey.toString();
@@ -651,7 +652,7 @@ Never submit placeholders or copied answers.</div></div>
       }
       throw new Error('not confirmed yet; check your wallet and try again');
     }
-    async function send(message) { const { signature } = await phantom().request({ method: 'signAndSendTransaction', params: { message: b58enc(message) } }); return signature; }
+    async function send(message) { const { signature } = await getPhantom().request({ method: 'signAndSendTransaction', params: { message: b58enc(message) } }); return signature; }
 
     // ---------- posters ----------
     function poster(b, cls = '') {
@@ -896,6 +897,7 @@ Never submit placeholders or copied answers.</div></div>
     try { setup(); } catch (e) { console.error(e); }
     window.addEventListener('hashchange', route);
     try { route(); } catch (e) { console.error(e); }
+  })();
   </script>
 </body>
 </html>
