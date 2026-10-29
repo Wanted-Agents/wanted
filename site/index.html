@@ -652,7 +652,8 @@ Never submit placeholders or copied answers.</div></div>
       }
       throw new Error('not confirmed yet; check your wallet and try again');
     }
-    async function send(message) { const { signature } = await getPhantom().request({ method: 'signAndSendTransaction', params: { message: b58enc(message) } }); return signature; }
+    // Phantom wants a whole unsigned transaction (1 empty signature slot + message), not the bare message
+    async function send(message) { const { signature } = await getPhantom().request({ method: 'signAndSendTransaction', params: { message: b58enc(cat(Uint8Array.of(1), new Uint8Array(64), message)) } }); return signature; }
 
     // ---------- posters ----------
     function poster(b, cls = '') {
